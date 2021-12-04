@@ -22,11 +22,11 @@ typedef struct
 						//Mức 1: không quan trọng, mức 2: có chút quan trọng
 						//Mức 3: khá quan trọng, mức 4: rất quan trọng
 }su_kien;
-bool SuKienQuanTrong(su_kien arr[], int i, int& dem)
+bool SuKienQuanTrong(su_kien x[], int i, int& dem)
 {	
 	//đặt điều kiện để kiểm tra xem sự kiện đó có khá quan trọng hay rất quan trọng không
 	//sự kiện khá quan trọng = 3; sự kiện rất quan trọng = 4
-	if (arr[i].do_quan_trong == 3 || arr[i].do_quan_trong == 4)
+	if (x[i].do_quan_trong == 3 || x[i].do_quan_trong == 4)
 	{
 		dem++; //trả về biến đếm để tính xem có sự kiện nào hay không
 		return true;
@@ -98,12 +98,14 @@ void SwapNumber(int& a, int& b)//chuyển đổi giá trị của 2 số nguyên
 }
 void SapXepThoiGian(su_kien x[],thoi_diem arr[], const int n)
 {
+	//Ta chuyển đổi thời điểm thành phút, sử dụng hàm XacDinhThoiDiem, và gán vào mảng thoigian
 	int temp = 0;
 	int thoigian[1000];
 	for (int i = 0; i < n; i++)
 	{
 		thoigian[i] = XacDinhThoiDiem(arr, i);
 	}
+	//Nếu thời gian trước lớn hơn thời gian sau thì ta hoán đổi cả 2 vị trí của 2 mảng thoigian và mảng x của su_kien
 	for (int i = 0; i < n - 1; i++)
 	{
 		for (int j = i + 1; j < n; j++)
@@ -116,65 +118,87 @@ void SapXepThoiGian(su_kien x[],thoi_diem arr[], const int n)
 		}
 	}
 }
-void XoaSuKien(su_kien arr[], int& n)
+void XoaSuKien(su_kien x[], int& n)
 {	
 	//Xóa sự kiện không quan trọng, có mức độ quan trọng bằng 1
 	for (int i = 0; i < n; i++)
 	{
-		if (arr[i].do_quan_trong == 1)//Xét điều kiện, nếu đúng thì ta sẽ sao chép toàn bộ dữ liệu phía sau lên trước 1 ô
+		if (x[i].do_quan_trong == 1)//Xét điều kiện, nếu đúng thì ta sẽ sao chép đè toàn bộ dữ liệu phía sau lên trước
 		{
 			for (int j = i; j < n; j++)
 			{
-				arr[j] = arr[j + 1];
+				x[j] = x[j + 1];
 			}
 			n--;//trừ độ dài của dãy cho 1, tiếp tục thực hiện vòng lặp
-			i--;//chặn trường hợp hoán đổi 2 vị trí đều cần phải xóa
+			i--;//chặn trường hợp hoán đổi 2 vị trí đều cần phải xóa, thì lúc đó ta sẽ bỏ sót 1 vị trí
 		}
 		
 	}
 	n--;//trừ độ dài của dãy cho 1 khi kết thúc
 }
+void DoQuanTrong(su_kien x[], int i)
+{
+	//trả về mức độ quan trọng dựa trên thang đo từ 1-4
+	switch (x[i].do_quan_trong)
+	{
+	case 1:
+		cout << "		Sự kiện này không quan trọng.\n";
+		break;
+	case 2:
+		cout << "		Sự kiện này có chút quan trọng.\n";
+		break;
+	case 3:
+		cout << "		Sự kiện này khá quan trọng.\n";
+		break;
+	case 4:
+		cout << "		Sự kiện này rất quan trọng.\n";
+		break;
+	}
+}
 void LietKeSKQuanTrong(su_kien x[], thoi_diem arr[], const int& n)
 {	
-	//Hàm liệt kê tên các sự kiện khá hoặc rất quan trọng
+	//Hàm liệt kê các sự kiện khá hoặc rất quan trọng (gồm ngày, tháng, năm, giờ, phút, tên sự kiện, và độ quan trọng)
 	int dem = 0;
 	cout << "+ Các sự kiện khá hoặc rất quan trọng: " << "\n";
 	for (int i = 0; i < n; i++)
 	{
 		if (SuKienQuanTrong(x, i, dem))//nếu hàm trả về giá trị true
 		{
-			cout << arr[i].ngay << "/" << arr[i].thang << "/" << arr[i].nam << "  " << arr[i].gio << ":" << arr[i].phut;
+			cout << "	" << arr[i].ngay << "/" << arr[i].thang << "/" << arr[i].nam << "  " << arr[i].gio << ":" << arr[i].phut;
 			cout << "\n		" << x[i].ten_su_kien << "\n";
+			DoQuanTrong(x, i);
 		}
 	}
 	if (dem == 0) cout << "Không có sự kiện nào khá hoặc rất quan trọng!";
 }
 void LietKeSKBuoiSang(su_kien x[], thoi_diem arr[], const int& n)
 {
-	//Hàm liệt kê tên các sự kiện diễn ra vào buổi sáng
+	//Hàm liệt kê các sự kiện diễn ra vào buổi sáng (gồm ngày, tháng, năm, giờ, phút, tên sự kiện, và độ quan trọng)
 	int dem = 0;
 	cout << "+ Các sự kiện diễn ra vào buổi sáng: " << "\n";
 	for (int i = 0; i < n; i++)
 	{
 		if (SuKienBuoiSang(arr, i, dem))//nếu hàm trả về giá trị true
 		{
-			cout << arr[i].ngay << "/" << arr[i].thang << "/" << arr[i].nam << "  " << arr[i].gio << ":" << arr[i].phut;
+			cout << "	" << arr[i].ngay << "/" << arr[i].thang << "/" << arr[i].nam << "  " << arr[i].gio << ":" << arr[i].phut;
 			cout << "\n		" << x[i].ten_su_kien << "\n";
+			DoQuanTrong(x, i);
 		}
 	}
 	if (dem == 0) cout << "Không có sự kiện nào diễn ra vào buổi sáng!";
 }
 void LietKeSKSauThoiDiem(su_kien x[], thoi_diem arr[], thoi_diem T[], const int& n)
 {
-	//Hàm liệt kê tên các sự kiện rất quan trọng sau 1 thời điểm cho trước
+	//Hàm liệt kê các sự kiện rất quan trọng sau 1 thời điểm cho trước (gồm ngày, tháng, năm, giờ, phút, tên sự kiện, và độ quan trọng)
 	int dem = 0;
 	cout << "+ Các sự kiện rất quan trọng diễn ra sau thòi điểm " << T[0].ngay << "/" << T[0].thang << "/" << T[0].nam << "  " << T[0].gio << ":" << T[0].phut << ":\n";
 	for (int i = 0; i < n; i++)
 	{
 		if (SKSauThoiDiem(x, arr, T, i, dem))//nếu hàm trả về giá trị true
 		{
-			cout << arr[i].ngay << "/" << arr[i].thang << "/" << arr[i].nam << "  " << arr[i].gio << ":" << arr[i].phut;
+			cout << "	" << arr[i].ngay << "/" << arr[i].thang << "/" << arr[i].nam << "  " << arr[i].gio << ":" << arr[i].phut;
 			cout << "\n		" << x[i].ten_su_kien << "\n";
+			DoQuanTrong(x, i);
 		}
 	}
 	if (dem == 0) cout << "Không có sự kiện nào rất quan trọng diễn ra sau thời điểm trên!";
@@ -185,5 +209,8 @@ int main()
 	thoi_diem t[5] = { {12,12,2022,23,59},{11,11,2021,21,12},{27,2,2022,7,30},{31,1,2021,4,30},{31,1,2021,4,35} };
 	su_kien s[5] = { {t[0],"Đi ngủ",4}, {t[1], "Quê", 1},{t[2],"Nhục",3},{t[3],"Mệt",1},{t[4],"Mỏi",1} };
 	thoi_diem T[1] = { 10,2,2021,12,12 };
+	LietKeSKBuoiSang(s, t, n);
+	LietKeSKQuanTrong(s, t, n);
+	LietKeSKSauThoiDiem(s, t, T, n);
 	return 0;
 }
